@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> نظام إدارة متجر الملابس</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <!-- Barcode generator -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <!-- QR generator -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- الشريط الجانبي -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>Shop Name</h1>
+            </div>
+
+            <div class="nav-links">
+                <a href="" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>لوحة التحكم</span>
+                </a>
+                <a href="#" class="nav-item" data-section="stock">
+                    <i class="fas fa-boxes"></i>
+                    <span>المخزون</span>
+                </a>
+                <a href="#" class="nav-item" data-section="suppliers">
+                    <i class="fas fa-truck"></i>
+                    <span>الموردين</span>
+                </a>
+
+                <a href="#" class="nav-item" data-section="qr">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Barcode</span>
+                </a>
+
+                <a href="#" class="nav-item" data-section="payment">
+                    <i class="fas fa-credit-card"></i>
+                    <span>طرق الدفع</span>
+                </a>
+                <a href="#" class="nav-item" data-section="checkout">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>الكاشير</span>
+                </a>
+                <!-- في الشريط الجانبي بعد قسم "المبيعات / الدفع" -->
+                <!-- أضف رابط المرتجعات هنا -->
+                <a href="#" class="nav-item" data-section="returns">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>المرتجعات</span>
+                </a>
+                <a href="#" class="nav-item" data-section="online-orders">
+                    <i class="fas fa-globe"></i>
+                    <span>الطلبات الأونلاين</span>
+                </a>
+                <a href="#" class="nav-item" data-section="customers">
+                    <i class="fas fa-user-friends"></i>
+                    <span>العملاء</span>
+                </a>
+                <!-- في الشريط الجانبي بعد قسم المرتجعات -->
+                <a href="#" class="nav-item" data-section="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>التقارير / السجلات</span>
+                </a>
+                <a href="#" class="nav-item" data-section="employees" id="employees-nav">
+                    <i class="fas fa-users-cog"></i>
+                    <span>الموظفين</span>
+                </a>
+            </div>
+            <div>
+                <p>
+                <div class="site-footer">
+                    <p
+                        style="font-size: 30px; color: #667eea; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                        TRIPLE A</p>© All Rights Reserved
+                </div>
+                </p>
+            </div>
+        </nav>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="main-content">
+            <!-- العنوان -->
+            <div class="header">
+                <div style="display:flex; align-items:center; gap: 15px;">
+                    <button id="sidebar-toggle" class="btn-icon-toggle" title="طي/توسيع القائمة">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 id="page-title">لوحة التحكم</h2>
+                </div>
+                <div class="header-actions">
+                    <button id="dark-mode-toggle" class="btn-icon-toggle" title="تبديل الوضع الليلي">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="user-profile" id="user-profile-btn" style="cursor:pointer;">
+                        <i class="fa-regular fa-user"></i>
+                        <span id="header-username">...</span>
+                    </div>
+                    <button class="btn btn-sm btn-danger" onclick="logout()" style="padding:8px 14px;">
+                        <i class="fas fa-sign-out-alt"></i> خروج
+                    </button>
+                </div>
+            </div>
+
+            <!-- قسم لوحة التحكم -->
+            <section id="dashboard" class="content-section active">
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">إجمالي المنتجات</div>
+                            <div class="card-icon icon-stock">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="total-products">6</div>
+                        <div class="card-change positive" id="products-change">+0 اليوم</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">مبيعات اليوم</div>
+                            <div class="card-icon icon-sales">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="today-sales">0.00 ج.م</div>
+                        <div class="card-change" id="sales-change">لا توجد مبيعات اليوم</div>
+                        <div style="margin-top:10px; display:flex; gap:10px; justify-content:flex-start;">
+                            <button class="btn btn-outline btn-sm" id="reset-day-btn" type="button">Reset Day</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">منتجات منخفضة المخزون</div>
+                            <div class="card-icon icon-payment">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="low-stock">2</div>
+                        <div class="card-change negative">تحتاج لإعادة التخزين</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">إيرادات الشهر</div>
+                            <div class="card-icon icon-reports">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="monthly-revenue">0.00 ج.م</div>
+                        <div class="card-change positive">+0% من الشهر الماضي</div>
+                        <div style="margin-top:10px; display:flex; gap:10px; justify-content:flex-start;">
+                            <button class="btn btn-outline btn-sm" id="reset-month-btn" type="button">Reset
+                                Month</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 30px;">
+                    <h3 style="padding: 20px 20px 0; color: var(--dark);">آخر المبيعات</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الفاتورة</th>
+                                <th>العميل</th>
+                                <th>المنتجات</th>
+                                <th>الإجمالي</th>
+                                <th>طريقة الدفع</th>
+                                <th>التاريخ</th>
+                                <th>طباعة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-sales">
+                            <!-- آخر المبيعات سيتم عرضها هنا -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- قسم المخزون -->
+            <section id="stock" class="content-section">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="color: var(--dark);">إدارة مخزون المنتجات</h2>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button class="btn btn-outline" id="clear-stock-btn" type="button">
+                            <i class="fas fa-broom"></i> حذف المخزون بالكامل
+                        </button>
+                        <button class="btn btn-primary" id="add-product-btn" type="button">
+                            <i class="fas fa-plus"></i> إضافة منتج
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم المنتج</th>
+                                <th>المنتج</th>
+                                <th>الفئة</th>
+                                <th>المقاس</th>
+                                <th>اللون</th>
+                                <th>السعر</th>
+                                <th>المخزون</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table">
+                            <!-- المنتجات ستظهر هنا -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <!-- قسم طرق الدفع -->
+            <section id="payment" class="content-section">
+                <h2 style="color: var(--dark);"> طرق الدفع</h2>
+                <p style="color: var(--gray); margin-top: 8px;">تعديل وإدارة خيارات الدفع</p>
+
+                <div id="payment-methods-list" class="form-container" style="margin-top: 24px;">
+                    <h3 style="color: var(--dark); margin-bottom: 20px;">طرق الدفع المتاحة</h3>
+                    <!-- طرق الدفع ستظهر هنا -->
+                </div>
+
+                <div class="form-container" style="margin-top: 30px;">
+                    <h3 style="color: var(--dark); margin-bottom: 20px;">إضافة طريقة دفع جديدة</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-name">اسم طريقة الدفع</label>
+                            <input type="text" id="payment-name" placeholder="مثال: باي بال، الدفع لاحقاً">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment-type">النوع</label>
+                            <select id="payment-type">
+                                <option value="card">بطاقة</option>
+                                <option value="digital">محفظة رقمية</option>
+                                <option value="bank">تحويل بنكي</option>
+                                <option value="buy_now">اشتري الآن وادفع لاحقاً</option>
+                                <option value="other">أخرى</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="payment-status">الحالة</label>
+                            <select id="payment-status">
+                                <option value="enabled">مفعل</option>
+                                <option value="disabled">معطل</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="add-payment-btn">
+                        <i class="fas fa-plus"></i> إضافة طريقة دفع
+                    </button>
+                </div>
+            </section>
+
+            <!-- قسم المبيعات -->
+            <section id="checkout" class="content-section">
+                <h2 style="color: var(--dark);">المبيعات / الدفع</h2>
+                <p style="color: var(--gray); margin-top: 8px;">معالجة المبيعات وإدارة الدفع</p>
+
+                <div class="checkout-container">
+                    <div class="cart-items">
+                        <h3 style="color: var(--dark); margin-bottom: 20px;">عربة التسوق</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customer-name">اسم العميل</label>
+                                <input type="text" id="customer-name" placeholder="ادخل اسم العميل (اختياري)"
+                                    value="عميل متجر">
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-phone">رقم الهاتف</label>
+                                <input type="text" id="customer-phone" placeholder="ادخل رقم الهاتف (اختياري)">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cashier-name">اسم الكاشير</label>
+                                <input type="text" id="cashier-name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="discount-input">الخصم (ج.م)</label>
+                                <input type="number" id="discount-input" min="0" step="0.01" placeholder="0">
+                            </div>
+                        </div>
+                        <div id="cart-items-list">
+                            <!-- عناصر العربة ستظهر هنا -->
+                            <div style="text-align: center; padding: 40px 20px; color: var(--gray);">
+                                <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 16px;"></i>
+                                <p>عربة التسوق فارغة. امسح أو أضف منتجات للبدء.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; margin-top: 20px;">
+                            <button class="btn btn-outline" id="scan-qr-btn">
+                                <i class="fas fa-qrcode"></i> مسح رمز Barcode
+                            </button>
+                            <button class="btn btn-outline" id="manual-add-btn">
+                                <i class="fas fa-search"></i> البحث
+                            </button>
+                            <button class="btn btn-danger" id="clear-cart-btn" style="margin-right: auto;">
+                                <i class="fas fa-trash"></i> تفريغ العربة
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cart-summary">
+                        <h3 style="color: var(--dark); margin-bottom: 20px;">ملخص الطلب</h3>
+
+                        <div class="summary-row">
+                            <span>المجموع الجزئي</span>
+                            <span id="subtotal">0.00 ج.م</span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                                <span>الضريبة</span>
+                                <label
+                                    style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:500;">
+                                    <input type="checkbox" id="tax-enabled" />
+                                    <span>ON/OFF</span>
+                                </label>
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <input type="number" id="tax-rate" value="14" min="0" step="0.01"
+                                        style="width:70px; padding:6px 8px; border-radius:8px; border:1px solid #ccc;" />
+                                    <span>%</span>
+                                </div>
+                            </span>
+                            <span id="tax">0.00 ج.م</span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>الخصم</span>
+                            <span id="discount">0.00 ج.م</span>
+                        </div>
+
+                        <div class="summary-row total">
+                            <span>الإجمالي</span>
+                            <span id="total">0.00 ج.م</span>
+                        </div>
+
+                        <div class="form-group" style="margin: 24px 0;">
+                            <label for="payment-method">طريقة الدفع</label>
+                            <select id="payment-method">
+                                <!-- طرق الدفع ستظهر هنا -->
+                            </select>
+                        </div>
+
+                        <button class="btn btn-success" id="complete-sale-btn" style="width: 100%; padding: 16px;">
+                            <i class="fas fa-check-circle"></i> إتمام البيع (<span id="total-amount">0.00</span> ج.م)
+                        </button>
+
+                        <button class="btn btn-outline" id="print-receipt-btn" style="width: 100%; margin-top: 12px;">
+                            <i class="fas fa-print"></i> طباعة الفاتورة
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- نافذة تفاصيل الفاتورة -->
+                <div id="invoice-details-modal" class="modal">
+                    <div class="modal-content" style="max-width: 900px;">
+                        <div class="modal-header">
+                            <div class="modal-title">تفاصيل الفاتورة</div>
+                            <div class="close-modal">&times;</div>
+                        </div>
+
+                        <div id="invoice-details-content"
+                            style="max-height: 70vh; overflow-y: auto; padding-right: 10px;">
+                            <!-- محتوى التفاصيل سيظهر هنا -->
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button class="btn btn-primary" id="print-invoice-details">
+                                <i class="fas fa-print"></i> طباعة التفاصيل
+                            </button>
+                            <button class="btn btn-outline" id="close-invoice-details">
+                                <i class="fas fa-times"></i> إغلاق
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="qr-scanner" style="display: none; margin-top: 30px;">
+                    <div class="scanner-container">
+                        <h3 style="color: var(--dark);">مسح رمز Barcode للمنتج</h3>
+                        <p style="color: var(--gray); margin-top: 8px;">وجّه الكاميرا نحو رمز QR للمنتج لإضافته إلى
+                            العربة</p>
+
+                        <div id="qr-reader" style="width: 500px;"></div>
+
+                        <div id="qr-reader-results"></div>
+
+                        <button class="btn btn-outline" id="stop-scan-btn" style="margin-top: 20px;">
+                            <i class="fas fa-stop"></i> Done
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- قسم الطلبات الأونلاين -->
+            <section id="online-orders" class="content-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div>
+                        <h2 style="color: var(--dark);">الطلبات الأونلاين</h2>
+                        <p style="color: var(--gray); margin-top: 8px;">إدارة طلبات البيع عبر الإنترنت والتوصيل</p>
+                    </div>
+                    <button class="btn btn-primary" id="add-online-order-btn">
+                        <i class="fas fa-plus"></i> إضافة طلب جديد
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>اسم العميل</th>
+                                <th>رقم الهاتف</th>
+                                <th>المنتجات الإجمالي</th>
+                                <th>القيمة</th>
+                                <th>تاريخ الطلب</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="online-orders-table">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- نافذة إضافة طلب أونلاين -->
+            <div id="online-order-modal" class="modal">
+                <div class="modal-content" style="max-width: 700px;">
+                    <div class="modal-header">
+                        <div class="modal-title">إضافة طلب أونلاين جديد</div>
+                        <div class="close-modal">&times;</div>
+                    </div>
+
+                    <form id="online-order-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>اسم العميل</label>
+                                <input type="text" id="oo-customer-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>رقم الهاتف</label>
+                                <input type="text" id="oo-customer-phone" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>العنوان</label>
+                            <input type="text" id="oo-customer-address" required>
+                        </div>
+
+                        <div style="margin: 20px 0; border: 1px solid #eee; padding: 15px; border-radius: 8px;">
+                            <h4 style="margin-bottom: 10px;">إضافة منتجات للطلب</h4>
+                            <div class="form-row" style="align-items: flex-end;">
+                                <div class="form-group" style="flex: 2;">
+                                    <label>البحث أو اختيار المنتج</label>
+                                    <select id="oo-product-select" style="width: 100%;">
+                                        <option value="">-- اختر المنتج من المخزون --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label>الكمية</label>
+                                    <input type="number" id="oo-product-qty" min="1" value="1">
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-outline" id="oo-add-item-btn">إضافة</button>
+                                </div>
+                            </div>
+
+                            <table style="margin-top: 15px; font-size: 14px;">
+                                <thead>
+                                    <tr>
+                                        <th>المنتج</th>
+                                        <th>السعر</th>
+                                        <th>الكمية</th>
+                                        <th>المجموع</th>
+                                        <th>حذف</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="oo-items-list">
+                                    <!-- Items added to order will show here -->
+                                </tbody>
+                            </table>
+                            <div style="text-align: left; margin-top: 10px; font-weight: bold;">
+                                إجمالي الطلب: <span id="oo-total-price">0.00</span> ج.م
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success" type="submit" style="width: 100%;">
+                            <i class="fas fa-save"></i> حفظ الطلب
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- قسم العملاء -->
+            <section id="customers" class="content-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div>
+                        <h2 style="color: var(--dark);">إدارة العملاء و كوبون الخصم</h2>
+                        <p style="color: var(--gray); margin-top: 8px;">إحصائيات المبيعات لكل عميل لتقديم الخصومات</p>
+                    </div>
+                </div>
+
+                <!-- إعدادات الكوبون -->
+                <div class="form-container"
+                    style="margin-bottom: 24px; padding: 20px; border-left: 4px solid var(--primary);">
+                    <h3 style="margin-bottom: 15px; font-size: 16px;">إعدادات خصم الكوبون</h3>
+                    <div class="form-row" style="align-items: flex-end;">
+                        <div class="form-group">
+                            <label>المبلغ المستهدف (ج.م) للخصم</label>
+                            <input type="number" id="customer-target-amount" min="0" placeholder="مثال: 5000">
+                        </div>
+                        <div class="form-group">
+                            <label>قيمة الخصم (ج.م)</label>
+                            <input type="number" id="customer-discount-value" min="0" placeholder="مثال: 100">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary" id="save-coupon-settings-btn">حفظ الإعدادات</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم العميل</th>
+                                <th>عدد مرات الشراء</th>
+                                <th>إجمالي المدفوعات</th>
+                                <th>مؤهل للخصم؟</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table">
+                            <!-- Customers stats will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- نافذة المنتجات الخاصة بالعميل -->
+            <div id="customer-items-modal" class="modal">
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <div class="modal-title">المنتجات المشتراة - <span id="ci-customer-name"></span></div>
+                        <div class="close-modal">&times;</div>
+                    </div>
+                    <div style="padding: 15px; line-height: 1.8;" id="ci-items-list">
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم المرتجعات -->
+            <section id="returns" class="content-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div>
+                        <h2 style="color: var(--dark);">إدارة المرتجعات</h2>
+                        <p style="color: var(--gray); margin-top: 8px;">إدارة عمليات مراجعة وإرجاع المنتجات</p>
+                    </div>
+                    <button class="btn btn-outline" id="sync-returns-btn">
+                        <i class="fas fa-sync-alt"></i> مزامنة مع الخادم
+                    </button>
+                </div>
+
+                <!-- إحصائيات المرتجعات -->
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">مرتجعات اليوم</div>
+                            <div class="card-icon" style="background: var(--primary);">
+                                <i class="fas fa-undo-alt"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="today-returns">0</div>
+                        <div class="card-change" id="returns-change">+0 من الأمس</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">إجمالي قيم المرتجعات</div>
+                            <div class="card-icon" style="background: var(--secondary);">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="total-returns-value">0.00 ج.م</div>
+                        <div class="card-change positive" id="returns-value-change">+0% من الشهر الماضي</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">منتجات تنتظر المراجعة</div>
+                            <div class="card-icon" style="background: var(--warning);">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="pending-returns">0</div>
+                        <div class="card-change negative">تحتاج مراجعة عاجلة</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">مرتجعات مكتملة</div>
+                            <div class="card-icon" style="background: var(--success);">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="completed-returns">0</div>
+                        <div class="card-change positive">+0% من الشهر الماضي</div>
+                    </div>
+                </div>
+
+                <!-- قائمة الفواتير -->
+                <div class="table-container" style="margin-top: 30px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 0;">
+                        <h3 style="color: var(--dark);">الفواتير المتاحة للارجاع</h3>
+                        <button class="btn btn-primary" id="process-return-btn">
+                            <i class="fas fa-plus"></i> معالجة إرجاع جديد
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الفاتورة</th>
+                                <th>العميل</th>
+                                <th>تاريخ الفاتورة</th>
+                                <th>المبلغ الإجمالي</th>
+                                <th>عدد المنتجات</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="returns-invoices-table">
+                            <!-- الفواتير ستظهر هنا -->
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: var(--gray);">
+                                    <i class="fas fa-file-invoice" style="font-size: 32px; margin-bottom: 16px;"></i>
+                                    <p>لا توجد فواتير متاحة للارجاع حالياً.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- سجل المرتجعات -->
+                <div class="table-container" style="margin-top: 30px;">
+                    <h3 style="padding: 20px 20px 0; color: var(--dark);">سجل المرتجعات الأخيرة</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم المرتجع</th>
+                                <th>رقم الفاتورة</th>
+                                <th>العميل</th>
+                                <th>تاريخ الارجاع</th>
+                                <th>المبلغ المسترجع</th>
+                                <th>طريقة الارجاع</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="returns-history-table">
+                            <!-- سجل المرتجعات سيظهر هنا -->
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px; color: var(--gray);">
+                                    <i class="fas fa-exchange-alt" style="font-size: 32px; margin-bottom: 16px;"></i>
+                                    <p>لا توجد مرتجعات مسجلة حتى الآن.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- قسم التقارير -->
+            <section id="reports" class="content-section">
+                <h2 style="color: var(--dark);">التقارير وسجلات النشاط</h2>
+                <p style="color: var(--gray); margin-top: 8px;">عرض سجلات النظام وإنشاء التقارير</p>
+
+                <div class="cards-grid" style="margin-top: 24px;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">تقرير يومي</div>
+                            <div class="card-icon" style="background: var(--primary);">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline" style="margin-top: 16px; width: 100%;"
+                            onclick="generateReport('daily')">
+                            <i class="fas fa-download"></i> إنشاء
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">تقرير أسبوعي</div>
+                            <div class="card-icon" style="background: var(--success);">
+                                <i class="fas fa-calendar-week"></i>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline" style="margin-top: 16px; width: 100%;"
+                            onclick="generateReport('weekly')">
+                            <i class="fas fa-download"></i> إنشاء
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">تقرير شهري</div>
+                            <div class="card-icon" style="background: var(--secondary);">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline" style="margin-top: 16px; width: 100%;"
+                            onclick="generateReport('monthly')">
+                            <i class="fas fa-download"></i> إنشاء
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">تقرير المخزون</div>
+                            <div class="card-icon" style="background: var(--warning);">
+                                <i class="fas fa-boxes"></i>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline" style="margin-top: 16px; width: 100%;"
+                            onclick="generateReport('inventory')">
+                            <i class="fas fa-download"></i> إنشاء
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 30px;">
+                    <h3 style="padding: 20px 20px 0; color: var(--dark);">سجل النشاط الأخير</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>التاريخ والوقت</th>
+                                <th>المستخدم</th>
+                                <th>الإجراء</th>
+                                <th>التفاصيل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activity-logs">
+                            <!-- سجلات النشاط ستظهر هنا -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <!-- قسم الموظفين -->
+            <section id="employees" class="content-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                    <div>
+                        <h2 style="color:var(--dark);">إدارة الموظفين</h2>
+                        <p style="color:var(--gray); margin-top:8px;">إضافة وتعديل وحذف حسابات الموظفين</p>
+                    </div>
+                    <button class="btn btn-primary" id="add-employee-btn">
+                        <i class="fas fa-user-plus"></i> إضافة موظف
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>الاسم</th>
+                                <th>اسم المستخدم</th>
+                                <th>الدور</th>
+                                <th>تاريخ الإضافة</th>
+                                <th>الرواتب</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employees-table">
+                            <!-- سيُحمَّل ديناميكياً -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- قسم الموردين -->
+            <section id="suppliers" class="content-section">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="color:var(--dark);">إدارة الموردين</h2>
+                    <button class="btn btn-primary" id="add-supplier-btn">
+                        <i class="fas fa-plus"></i> إضافة مورد
+                    </button>
+                </div>
+
+                <!-- قائمة فواتير الموردين -->
+                <div id="suppliers-list" class="supplier-invoices">
+                    <div style="text-align:center; padding:40px; color:var(--gray);">
+                        <i class="fas fa-truck" style="font-size:32px; margin-bottom:16px;"></i>
+                        <p>لا توجد فواتير موردين حتى الآن.</p>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- نافذة عرض بيانات فاتورة المورد -->
+            <div id="supplier-view-modal" class="modal">
+                <div class="modal-content" style="max-width:650px;">
+                    <div class="modal-header">
+                        <div class="modal-title">بيانات فاتورة المورد</div>
+                        <div class="close-modal">&times;</div>
+                    </div>
+                    <div class="modal-body" id="supplier-view-content" style="padding: 20px;"></div>
+                    <div class="modal-footer"
+                        style="display:flex; justify-content:flex-end; gap:10px; padding: 0 20px 20px;">
+                        <button class="btn btn-outline close-modal">
+                            <i class="fas fa-times"></i> إغلاق
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نافذة إضافة / تعديل مورد -->
+            <div id="supplier-modal" class="modal">
+                <div class="modal-content" style="max-width:700px;">
+                    <div class="modal-header">
+                        <div class="modal-title">إضافة مورد</div>
+                        <div class="close-modal">&times;</div>
+                    </div>
+
+                    <form id="supplier-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>اسم المورد</label>
+                                <input type="text" id="supplier-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>رقم الهاتف</label>
+                                <input type="text" id="supplier-phone">
+                            </div>
+                            <div class="form-group">
+                                <label>اسم السلعة</label>
+                                <input type="text" id="supplier-item" placeholder="مثال: بنطلون كلاسيك" required>
+                            </div>
+                            <div class="form-group">
+                                <label>الفئة</label>
+                                <select id="supplier-category" required>
+                                    <option value="women">بناطيل نسائية</option>
+                                    <option value="women">اكسسوارات نسائية</option>
+                                    <option value="women">تيشرتات نسائية</option>
+                                    <option value="women">اخرى</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>سعر الجملة</label>
+                                <input type="number" id="supplier-wholesale" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>سعر البيع</label>
+                                <input type="number" id="supplier-sell" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>باركود المورد</label>
+                                <input type="text" id="supplier-barcode" placeholder="اختياري">
+                            </div>
+                            <div class="form-group">
+                                <label>الباركود الجديد (أساسي) *</label>
+                                <input type="text" id="supplier-new-barcode" placeholder="مثال: 411110269" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                                <span>المقاسات / الألوان / الكميات</span>
+                                <button class="btn btn-outline btn-sm" type="button" id="add-variant-btn">
+                                    <i class="fas fa-plus"></i> إضافة مقاس/لون
+                                </button>
+                            </label>
+                            <div id="supplier-variants" class="variants-wrap"></div>
+                            <div style="color:var(--gray); font-size:12px; margin-top:8px; line-height:1.7;">
+                                * سيتم إضافة كل (لون + مقاس) تلقائيًا إلى <b>المخزون</b> مع باركود خاص به.
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>رقم الفاتورة</label>
+                                <input type="text" id="supplier-invoice">
+                            </div>
+                            <div class="form-group">
+                                <label>تاريخ الشراء</label>
+                                <input type="date" id="supplier-date">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>ملاحظات</label>
+                            <textarea id="supplier-notes" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>صورة الفاتورة</label>
+                            <input type="file" id="supplier-invoice-image" accept="image/*">
+                        </div>
+
+                        <button class="btn btn-success" type="submit" style="width:100%;">
+                            <i class="fas fa-save"></i> حفظ وإضافة للمخزون
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- Barcode Section -->
+            <section id="qr" class="content-section">
+                <div class="section-header">
+                    <h2>إنشاء وطباعة Barcode</h2>
+                    <p>اختر منتج من المخزون أو أدخل الكود يدوياً، ثم حدد الكمية المطلوبة للطباعة.</p>
+                </div>
+
+                <div class="card qr-card">
+                    <div class="qr-grid">
+                        <div class="qr-form">
+                            <!-- اختيار من المخزون -->
+                            <div class="form-group">
+                                <label>اختر منتج من المخزون</label>
+                                <select id="qrProductSelect" style="font-family:inherit;">
+                                    <option value="">-- اختر منتج --</option>
+                                </select>
+                            </div>
+
+                            <div style="text-align:center; padding:4px 0; color:var(--gray); font-size:13px;">— أو أدخل
+                                يدوياً —</div>
+
+                            <div class="form-group">
+                                <label>كود الباركود</label>
+                                <input type="text" id="qrProductCode" placeholder="مثال: 411110237" autocomplete="off">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>اسم المنتج</label>
+                                    <input type="text" id="qrProductName" placeholder="مثال: بنطلون" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label>السعر</label>
+                                    <input type="text" id="qrPrice" placeholder="مثال: 299" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>اللون</label>
+                                    <input type="text" id="qrColor" placeholder="مثال: أسود" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label>المقاس</label>
+                                    <input type="text" id="qrSize" placeholder="مثال: M" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>عدد النسخ للطباعة</label>
+                                <input type="number" id="qrPrintQty" value="1" min="1" max="200" style="width:120px;">
+                            </div>
+
+                            <div class="qr-actions">
+                                <button class="btn btn-primary" id="btnPrintQr">
+                                    <i class="fas fa-print"></i> طباعة
+                                </button>
+                                <button class="btn btn-outline" id="btnClearQr">
+                                    <i class="fas fa-eraser"></i> مسح
+                                </button>
+                            </div>
+
+                            <div class="print-status" id="qrPrintStatus" style="display:none;"></div>
+                        </div>
+
+                        <div class="qr-preview">
+                            <div class="qr-label" id="qrLabel">
+                                <div class="qr-top">
+                                    <div class="qr-top-left">
+                                        <span class="muted" id="qrTopCode1">—</span>
+                                    </div>
+                                    <div class="qr-top-right">
+                                        <span class="muted" id="qrTopCode2">—</span>
+                                        <span id="qrTopName">—</span>
+                                    </div>
+                                </div>
+                                <div class="qr-middle">
+                                    <div id="qrBox"><canvas id="barcodeCanvas"></canvas></div>
+                                </div>
+                                <div class="qr-bottom">
+                                    <div class="qr-bottom-left">
+                                        <span class="pill" id="qrBottomSize">—</span>
+                                    </div>
+                                    <div class="qr-bottom-center">
+                                        <span class="big-code" id="qrBottomCode">—</span>
+                                    </div>
+                                    <div class="qr-bottom-right">
+                                        <span class="pill" id="qrBottomColor">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="hint">معاينة الملصق – سيُطبع بعدد النسخ المحددة.</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- نافذة المنتج -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-product-title">إضافة منتج جديد</div>
+                <div class="close-modal">&times;</div>
+            </div>
+
+            <form id="product-form">
+                <input type="hidden" id="product-id" value="">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-name">اسم المنتج</label>
+                        <input type="text" id="product-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-category">الفئة</label>
+                        <select id="product-category" required>
+                            <option value="">اختر الفئة</option>
+                            <option value="women">بناطيل نسائية</option>
+                            <option value="women">اكسسوارات نسائية</option>
+                            <option value="women">تيشرتات نسائية</option>
+                            <option value="women">اخرى</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-price">السعر (ج.م)</label>
+                        <input type="number" id="product-price" step="0.01" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-stock">الكمية في المخزون</label>
+                        <input type="number" id="product-stock" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-barcode">الباركود *</label>
+                        <input type="text" id="product-barcode" required placeholder="اكتب باركود المنتج">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-supplier-barcode">باركود المورد (اختياري)</label>
+                        <input type="text" id="product-supplier-barcode" placeholder="اختياري">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-size">المقاس</label>
+                        <input type="text" id="product-size" required placeholder="اكتب المقاس ">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-color">اللون</label>
+                        <input type="text" id="product-color" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-description">الوصف</label>
+                    <textarea id="product-description" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-image">رابط الصورة</label>
+                    <input type="text" id="product-image" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-save"></i> حفظ المنتج
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة الطباعة المجددة من الداشبورد -->
+    <div id="reprint-modal" class="modal">
+        <div class="modal-content" style="max-width:520px;">
+            <div class="modal-header">
+                <div class="modal-title">🖨️ إعادة طباعة الفاتورة</div>
+                <div class="close-modal">&times;</div>
+            </div>
+            <div id="reprint-receipt-content"
+                style="background:#fff; padding:24px; border-radius:12px; border:1px solid #eee;"></div>
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-primary" onclick="window.print()" style="flex:1;">
+                    <i class="fas fa-print"></i> طباعة
+                </button>
+                <button class="btn btn-outline close-modal" style="flex:1;">
+                    <i class="fas fa-times"></i> إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة الموظف -->
+    <div id="employee-modal" class="modal">
+        <div class="modal-content" style="max-width:480px;">
+            <div class="modal-header">
+                <div class="modal-title" id="employee-modal-title">إضافة موظف</div>
+                <div class="close-modal">&times;</div>
+            </div>
+            <form id="employee-form">
+                <input type="hidden" id="employee-id">
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="employee-name" required placeholder="مثال: محمد علي">
+                </div>
+                <div class="form-group">
+                    <label>اسم المستخدم</label>
+                    <input type="text" id="employee-username" required placeholder="مثال: cashier1"
+                        style="direction:ltr;">
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <input type="text" id="employee-password" placeholder="اتركه فارغاً للإبقاء على القديم"
+                        style="direction:ltr;">
+                </div>
+                <div class="form-group">
+                    <label>الدور</label>
+                    <select id="employee-role">
+                        <option value="cashier">كاشير</option>
+                        <option value="admin">مسؤول</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">
+                    <i class="fas fa-save"></i> حفظ
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة إدارة الرواتب المخصصة للموظف -->
+    <div id="salary-modal" class="modal">
+        <div class="modal-content" style="max-width:700px;">
+            <div class="modal-header">
+                <div class="modal-title" id="salary-modal-title">إدارة رواتب الموظف</div>
+                <div class="close-modal" onclick="closeAllModals()">&times;</div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 id="salary-employee-name" style="color:var(--dark);">اسم الموظف</h3>
+                <button class="btn btn-primary btn-sm" onclick="openAddSalaryForm()">
+                    <i class="fas fa-plus"></i> إضافة راتب جديد
+                </button>
+            </div>
+
+            <!-- نموذج إضافة راتب (مخفي افتراضياً) -->
+            <form id="salary-form"
+                style="display:none; background:var(--glass-bg); padding:15px; border-radius:10px; border:1px solid var(--glass-border); margin-bottom:20px;">
+                <input type="hidden" id="salary-id">
+                <input type="hidden" id="salary-emp-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الشهر</label>
+                        <input type="month" id="salary-month" required>
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ</label>
+                        <input type="number" id="salary-amount" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الحالة</label>
+                        <select id="salary-status">
+                            <option value="pending">معلق (لم يُدفع)</option>
+                            <option value="paid">تم الدفع</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ملاحظات</label>
+                        <input type="text" id="salary-notes" placeholder="مكافأة، خصم، إلخ...">
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;">
+                        <i class="fas fa-save"></i> حفظ الراتب
+                    </button>
+                    <button type="button" class="btn btn-outline" style="flex:1;"
+                        onclick="document.getElementById('salary-form').style.display='none'">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                </div>
+            </form>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الشهر</th>
+                            <th>المبلغ</th>
+                            <th>الحالة</th>
+                            <th>تاريخ الدفع</th>
+                            <th>ملاحظات</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salaries-table">
+                        <!-- سيُحمَّل ديناميكياً -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer" style="margin-top:20px; text-align:left;">
+                <button class="btn btn-outline close-modal" onclick="closeAllModals()">
+                    <i class="fas fa-times"></i> إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة الفاتورة -->
+    <div id="receipt-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">الفاتورة</div>
+                <div class="close-modal">&times;</div>
+            </div>
+
+            <div class="receipt" id="receipt-printable">
+                <div class="receipt-header">
+                    <h2 style="font-size:22px; color:#333; margin-bottom:4px;" id="receipt-store-name">متجرنا</h2>
+                    <p style="color:#666; font-size:13px;" id="receipt-store-address">العنوان: شارع عدنان المالكي</p>
+                    <p style="color:#666; font-size:13px;" id="receipt-store-phone">هاتف: 01204417212</p>
+                    <div style="border-top:2px dashed #ccc; margin:12px 0;"></div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:13px;">
+                        <span style="color:#888;">رقم الفاتورة:</span><span id="receipt-number"
+                            style="font-weight:700;">SF-00123</span>
+                        <span style="color:#888;">التاريخ:</span><span id="receipt-date">—</span>
+                        <span style="color:#888;">الكاشير:</span><span id="receipt-cashier">-</span>
+                        <span style="color:#888;">العميل:</span><span id="receipt-customer">عميل متجر</span>
+                    </div>
+                    <div style="border-top:2px dashed #ccc; margin:12px 0;"></div>
+                </div>
+
+                <div class="receipt-items" id="receipt-items">
+                    <!-- عناصر الفاتورة ستظهر هنا -->
+                </div>
+
+                <div class="receipt-total"
+                    style="background:#f8f9fa; border-radius:8px; padding:12px; margin-top:12px;">
+                    <div class="receipt-item" style="display:flex; justify-content:space-between; padding:4px 0;">
+                        <span style="color:#888;">الإجمالي:</span>
+                        <span id="receipt-total" style="font-weight:600;">0.00 ج.م</span>
+                    </div>
+                    <div class="receipt-item" style="display:flex; justify-content:space-between; padding:4px 0;">
+                        <span style="color:#888;">طريقة الدفع:</span>
+                        <span id="receipt-payment">كاش</span>
+                    </div>
+                    <div class="receipt-item" style="display:flex; justify-content:space-between; padding:4px 0;">
+                        <span style="color:#888;">الخصم:</span>
+                        <span id="receipt-discount">0.00 ج.م</span>
+                    </div>
+                    <div class="receipt-item"
+                        style="display:flex; justify-content:space-between; padding:8px 0 0; border-top:1px solid #ddd; font-size:18px; font-weight:700;">
+                        <span>الإجمالي بعد الخصم:</span>
+                        <span id="receipt-total-after-discount">0.00 ج.م</span>
+                    </div>
+                </div>
+
+                <div style="text-align:center; margin-top:16px; color:#888; font-size:13px;">
+                    <p>✨ شكراً لتسوقك معنا! ✨</p>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button class="btn btn-primary" id="print-receipt-modal-btn">
+                    <i class="fas fa-print"></i> طباعة الفاتورة
+                </button>
+                <button class="btn btn-outline" id="close-receipt-btn">
+                    <i class="fas fa-times"></i> إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة البحث اليدوي -->
+    <div id="manual-add-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"> البحث : </div>
+                <div class="close-modal">&times;</div>
+            </div>
+
+            <div class="form-group">
+                <label for="search-product">الرجاء تمرير جهاز Barcode-Scanner او كتابة رقم المنتج يدويا</label>
+                <input type="text" id="search-product" placeholder="ادخل رقم المنتج أو الاسم">
+            </div>
+
+            <div id="search-results" style="margin-top: 20px;">
+                <!-- نتائج البحث ستظهر هنا -->
+            </div>
+
+            <button class="btn btn-primary" id="search-btn" style="width: 100%; margin-top: 20px;">
+                <i class="fas fa-search"></i> بحث عن المنتج
+            </button>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل طريقة الدفع -->
+    <div id="edit-payment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">تعديل طريقة الدفع</div>
+                <div class="close-modal">&times;</div>
+            </div>
+
+            <form id="edit-payment-form">
+                <input type="hidden" id="edit-payment-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-payment-name">اسم طريقة الدفع</label>
+                        <input type="text" id="edit-payment-name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-payment-type">النوع</label>
+                        <select id="edit-payment-type" required>
+                            <option value="cash">كاش</option>
+                            <option value="card">بطاقة</option>
+                            <option value="digital">محفظة رقمية</option>
+                            <option value="bank">تحويل بنكي</option>
+                            <option value="buy_now">اشتري الآن وادفع لاحقاً</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-payment-status">الحالة</label>
+                        <select id="edit-payment-status" required>
+                            <option value="enabled">مفعل</option>
+                            <option value="disabled">معطل</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-payment-fee">رسوم المعاملة (%)</label>
+                        <input type="number" id="edit-payment-fee" step="0.01" min="0" max="10" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-payment-description">الوصف</label>
+                    <textarea id="edit-payment-description" rows="3"
+                        placeholder="تفاصيل إضافية حول طريقة الدفع هذه"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">
+                    <i class="fas fa-save"></i> حفظ التغييرات
+                </button>
+
+                <button type="button" class="btn btn-danger" id="delete-payment-btn" style="width: 100%;">
+                    <i class="fas fa-trash"></i> حذف طريقة الدفع
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة معالجة المرتجع -->
+    <div id="return-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="return-modal-title">معالجة إرجاع منتجات</div>
+                <div class="close-modal">&times;</div>
+            </div>
+
+            <form id="return-form">
+                <input type="hidden" id="return-sale-id">
+                <input type="hidden" id="return-id">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="return-invoice">رقم الفاتورة</label>
+                        <input type="text" id="return-invoice" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="return-customer">العميل</label>
+                        <input type="text" id="return-customer" readonly>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="return-date">تاريخ الفاتورة</label>
+                        <input type="text" id="return-date" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="return-original-total">المبلغ الأصلي</label>
+                        <input type="text" id="return-original-total" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="return-reason">سبب الارجاع</label>
+                    <select id="return-reason" required>
+                        <option value="">اختر السبب</option>
+                        <option value="defective">منتج معيب</option>
+                        <option value="wrong_size">مقاس غير مناسب</option>
+                        <option value="wrong_color">لون غير مناسب</option>
+                        <option value="not_as_described">غير مطابق للوصف</option>
+                        <option value="changed_mind">تغيير في الرأي</option>
+                        <option value="late_delivery">تأخير في التوصيل</option>
+                        <option value="other">سبب آخر</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="return-description">تفاصيل إضافية</label>
+                    <textarea id="return-description" rows="3"
+                        placeholder="أدخل تفاصيل إضافية عن سبب الارجاع"></textarea>
+                </div>
+
+                <!-- قائمة المنتجات المراد إرجاعها -->
+                <div class="form-group">
+                    <label>المنتجات المراد إرجاعها</label>
+                    <div id="return-products-list" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
+                        <!-- المنتجات ستظهر هنا -->
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="return-method">طريقة الارجاع</label>
+                        <select id="return-method" required>
+                            <option value="refund">استرداد مالي</option>
+                            <option value="exchange">استبدال المنتج</option>
+                            <option value="credit">رصيد لحساب العميل</option>
+                            <option value="partial_refund">استرداد جزئي</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="return-amount">المبلغ المسترجع (ج.م)</label>
+                        <input type="number" id="return-amount" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="return-status">حالة المرتجع</label>
+                        <select id="return-status" required>
+                            <option value="pending">قيد المراجعة</option>
+                            <option value="approved">معتمد</option>
+                            <option value="completed">مكتمل</option>
+                            <option value="rejected">مرفوض</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="return-refund-method">طريقة الاسترداد</label>
+                        <select id="return-refund-method">
+                            <option value="cash">نقداً</option>
+                            <option value="card">بطاقة</option>
+                            <option value="bank_transfer">تحويل بنكي</option>
+                            <option value="store_credit">رصيد في المتجر</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="return-notes">ملاحظات إضافية</label>
+                    <textarea id="return-notes" rows="2" placeholder="ملاحظات إضافية للمراجعة"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">
+                    <i class="fas fa-save"></i> حفظ المرتجع
+                </button>
+
+                <button type="button" class="btn btn-success" id="complete-return-btn"
+                    style="width: 100%; margin-bottom: 10px;">
+                    <i class="fas fa-check-circle"></i> إكمال العملية
+                </button>
+
+                <button type="button" class="btn btn-danger" id="delete-return-btn" style="width: 100%;">
+                    <i class="fas fa-trash"></i> حذف المرتجع
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة عرض تفاصيل المرتجع -->
+    <div id="return-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">تفاصيل المرتجع</div>
+                <div class="close-modal">&times;</div>
+            </div>
+
+            <div id="return-details-content">
+                <!-- تفاصيل المرتجع ستظهر هنا -->
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+            </div>
+        </div>
+    </div>
+    <!-- نافذة إضافة عملية استيراد -->
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-import-title">إضافة عملية استيراد جديدة</div>
+                <div class="close-modal">&times;</div>
+            </div>
+            <div id="purchase-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title" id="modal-purchase-title">إضافة عملية شراء جديدة</div>
+                        <div class="close-modal">&times;</div>
+                    </div>
+
+                    <form id="purchase-form">
+                        <input type="hidden" id="purchase-id" value="">
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="purchase-supplier">اختر المورد *</label>
+                                <select id="purchase-supplier" required>
+                                    <option value="">اختر المورد</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="purchase-product">المنتج *</label>
+                                <input type="text" id="purchase-product" required placeholder="اسم المنتج أو الخامة">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="purchase-quantity">الكمية *</label>
+                                <input type="number" id="purchase-quantity" required min="1"
+                                    placeholder="الكمية المشتراة">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="purchase-unit-price">سعر الوحدة (ج.م) *</label>
+                                <input type="number" id="purchase-unit-price" required step="0.01" min="0"
+                                    placeholder="سعر الوحدة">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="purchase-invoice">رقم الفاتورة *</label>
+                                <input type="text" id="purchase-invoice" required placeholder="رقم فاتورة الشراء">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="purchase-date">تاريخ الشراء *</label>
+                                <input type="date" id="purchase-date" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="purchase-status">حالة العملية *</label>
+                                <select id="purchase-status" required>
+                                    <option value="pending">قيد المعالجة</option>
+                                    <option value="ordered">تم الطلب</option>
+                                    <option value="shipped">تم الشحن</option>
+                                    <option value="delivered">تم التوصيل</option>
+                                    <option value="cancelled">ملغي</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="purchase-total">الإجمالي (ج.م)</label>
+                                <input type="text" id="purchase-total" readonly style="background: #f8fafc;">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="purchase-notes">ملاحظات</label>
+                            <textarea id="purchase-notes" rows="2" placeholder="ملاحظات حول عملية الشراء"></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; margin-top: 20px;">
+                            <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                <i class="fas fa-save"></i> حفظ العملية
+                            </button>
+                            <button type="button" class="btn btn-outline" id="cancel-purchase-btn" style="flex: 1;">
+                                <i class="fas fa-times"></i> إلغاء
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- Barcode Modal -->
+            <div id="barcode-modal" class="modal">
+                <div class="modal-content" style="max-width:520px;">
+                    <div class="modal-header">
+                        <div class="modal-title">باركود المنتج</div>
+                        <div class="close-modal">&times;</div>
+                    </div>
+                    <div style="padding:12px; text-align:center;">
+                        <div class="barcode-label">
+                            <div id="barcode-product-name" style="font-weight:800; margin-bottom:8px;"></div>
+                            <div id="barcode-product-info"
+                                style="color:var(--gray); font-size:13px; margin:-2px 0 10px;"></div>
+
+                            <!-- Live Barcode Generator (CODE128) -->
+                            <input type="text" id="barcodeInput" placeholder="اكتب كود المنتج..."
+                                oninput="generateBarcode()"
+                                style="max-width:360px; width:100%; margin:0 auto 10px; direction:ltr;" />
+                            <canvas id="barcodeCanvas"
+                                style="margin-top:0; background:#fff; padding:10px; border-radius:10px;"></canvas>
+
+                            <div id="barcode-text" style="margin-top:8px; color:var(--gray); direction:ltr;"></div>
+                            <div id="barcode-printed-code"
+                                style="display:none; margin-top:10px; padding:10px; border:1px dashed rgba(0,0,0,0.18); border-radius:10px; color:var(--gray);">
+                                تم طباعة الباركود: <b id="barcode-printed-value"
+                                    style="color:var(--text); direction:ltr;"></b>
+                            </div>
+                        </div>
+
+                        <div class="barcode-actions">
+                            <button class="btn btn-primary" type="button" onclick="printBarcode()">
+                                <i class="fas fa-print"></i> طباعة
+                            </button>
+
+                            <button class="btn btn-outline" type="button" onclick="closeBarcodeModalOnly()">
+                                <i class="fas fa-arrow-right"></i> رجوع
+                            </button>
+
+                            <button class="btn btn-outline" type="button" onclick="closeAllModals()">
+                                <i class="fas fa-times"></i> إغلاق
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="invoice-image-modal" class="modal">
+                <div class="modal-content" style="max-width:600px;">
+                    <div class="modal-header">
+                        <div class="modal-title">صورة الفاتورة</div>
+                        <div class="close-modal">&times;</div>
+                    </div>
+                    <img id="invoice-image-preview" style="width:100%; border-radius:12px;">
+                </div>
+            </div>
+
+</body>
+
+</html>
