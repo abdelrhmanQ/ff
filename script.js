@@ -1,16 +1,3 @@
-const API_URL = "http://localhost:3000";
-
-// في بداية ملف script.js - بعد تعريف المتغيرات
-// التحقق من الجلسة عند تحميل الصفحة
-function checkSession() {
-    const sessionData = localStorage.getItem("current_session_v3");
-    if (!sessionData) {
-        // إذا لم توجد جلسة، ارجع إلى صفحة تسجيل الدخول
-        window.location.href = "login.html";
-        return null;
-    }
-    return JSON.parse(sessionData);
-}
 
 // دالة لتحديث بروفايل المستخدم
 function updateUserProfile(session) {
